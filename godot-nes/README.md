@@ -6,11 +6,14 @@
 画面显示的是诊断画面（见下面「阶段 0 验收」）。开发计划见仓库根的
 [`godot-nes-emulator-plan.md`](../godot-nes-emulator-plan.md)。
 
+> **关于本文里的路径**：`<Godot 目录>`、`<项目目录>`、`<ROM 路径>` 都是占位符，
+> 替换成你自己机器上的实际路径即可（例如 `<Godot 目录>` 换成你解压 Godot 的位置）。
+> 为了可读性，示例里没有把每条命令都写成 PowerShell 变量，复制后改一下路径就能用。
 ## 环境
 
 | 项目 | 版本 | 说明 |
 |:---|:---|:---|
-| Godot | 4.7.2 stable **mono** | 必须用带 .NET 的版本，`E:\Godot_v4.7.2-stable_mono_win64` |
+| Godot | 4.7.2 stable **mono** | 必须用带 .NET 的版本，`<Godot 目录>` |
 | .NET SDK | 10.0.301 | 见下面「为什么目标框架是 net10.0」 |
 | .NET 运行时 | 10.x（或 8.x / 9.x） | Godot 自己的 `GodotPlugins.runtimeconfig.json` 是 `net8.0` + `rollForward=LatestMajor` |
 
@@ -32,7 +35,7 @@
 包缓存改到别处：
 
 ```powershell
-$env:NUGET_PACKAGES = "E:\godot-nes\.nuget-packages"   # 该目录已加入 .gitignore
+$env:NUGET_PACKAGES = "<项目目录>\.nuget-packages"   # 该目录已加入 .gitignore
 ```
 
 > 解决方案文件（`.sln`）不是必需的：Godot 构建的是 `.csproj`，命令行也是。
@@ -115,23 +118,23 @@ godot-nes/
 
 ### 在 Godot 编辑器里
 
-用 `E:\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64.exe` 打开
-`E:\godot-nes\godot-nes\project.godot`，按 `F5` 运行。编辑器里的「Build」按钮
+用 `<Godot 目录>\Godot_v4.7.2-stable_mono_win64.exe` 打开
+`<项目目录>\godot-nes\project.godot`，按 `F5` 运行。编辑器里的「Build」按钮
 就是调 `dotnet build`。
 
 ### 只用命令行
 
 ```powershell
 # 编译
-dotnet build E:\godot-nes\godot-nes\godot-nes.csproj
+dotnet build <项目目录>\godot-nes\godot-nes.csproj
 
 # 运行（带控制台输出，方便看日志）
-& "E:\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64_console.exe" `
-  --path "E:\godot-nes\godot-nes"
+& "<Godot 目录>\Godot_v4.7.2-stable_mono_win64_console.exe" `
+  --path "<项目目录>\godot-nes"
 
 # 直接启动并装载 ROM
-& "E:\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64_console.exe" `
-  --path "E:\godot-nes\godot-nes" -- --rom "D:\roms\Super Mario Bros.nes"
+& "<Godot 目录>\Godot_v4.7.2-stable_mono_win64_console.exe" `
+  --path "<项目目录>\godot-nes" -- --rom "<ROM 路径>"
 ```
 
 ### 命令行参数（写在 `--` 之后）
@@ -290,27 +293,27 @@ CPU / PPU 的详细状态放在 **独立的 OS 窗口**里（`Window` 节点）�
 
 ```powershell
 # 1) 编译：应该 0 警告 0 错误
-dotnet build E:\godot-nes\godot-nes\godot-nes.csproj
+dotnet build <项目目录>\godot-nes\godot-nes.csproj
 
 # 2) 生成合成测试 ROM（没有真实 ROM 时用）
-powershell -NoProfile -ExecutionPolicy Bypass -File E:\godot-nes\godot-nes\tests\make_test_rom.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File <项目目录>\godot-nes\tests\make_test_rom.ps1
 
 # 3) 无头冒烟测试：144 项断言，退出码 0 = 全过
-& "E:\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64_console.exe" `
-  --headless --path "E:\godot-nes\godot-nes" "res://tests/smoke_test.tscn"
+& "<Godot 目录>\Godot_v4.7.2-stable_mono_win64_console.exe" `
+  --headless --path "<项目目录>\godot-nes" "res://tests/smoke_test.tscn"
 echo "退出码 $LASTEXITCODE"
 
 # 4) CPU 差分测试：和 fogleman/nes 逐行比对 CPU 状态，退出码 0 = 完全一致
-powershell -NoProfile -ExecutionPolicy Bypass -File E:\godot-nes\godot-nes\tests\cpu_diff.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File <项目目录>\godot-nes\tests\cpu_diff.ps1
 echo "退出码 $LASTEXITCODE"
 
 # 5) PPU 差分测试：和 fogleman/nes 逐像素比对画面（两个 ROM，各 61440 像素），
 #    外加手算核对关键像素和 NMI 计数
-powershell -NoProfile -ExecutionPolicy Bypass -File E:\godot-nes\godot-nes\tests\ppu_diff.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File <项目目录>\godot-nes\tests\ppu_diff.ps1
 echo "退出码 $LASTEXITCODE"
 
 # 6) APU 测试：奏已知频率的音再量回来（静音必须是 0，脉冲 440 Hz、三角波 220 Hz）
-powershell -NoProfile -ExecutionPolicy Bypass -File E:\godot-nes\godot-nes\tests\apu_test.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File <项目目录>\godot-nes\tests\apu_test.ps1
 echo "退出码 $LASTEXITCODE"
 ```
 
@@ -343,9 +346,9 @@ echo "退出码 $LASTEXITCODE"
 想看一幅确定的画面，可以跑 PPU 测试 ROM（它会配好调色板/名称表/属性表/精灵并开渲染）：
 
 ```powershell
-& "E:\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64_console.exe" `
-  --path "E:\godot-nes\godot-nes" `
-  -- --rom "E:\godot-nes\godot-nes\tests\roms\ppu-test.nes"
+& "<Godot 目录>\Godot_v4.7.2-stable_mono_win64_console.exe" `
+  --path "<项目目录>\godot-nes" `
+  -- --rom "<项目目录>\godot-nes\tests\roms\ppu-test.nes"
 ```
 
 ## 已知提示

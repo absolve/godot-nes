@@ -105,11 +105,6 @@ public sealed partial class Ppu
             byte low = ReadVram((ushort)patternAddress);
             byte high = ReadVram((ushort)(patternAddress + 8));
 
-            // 临时排查：把底栏第 205 行每个图块的取图信息打出来
-            if (y == 205 && DbgBackgroundProbe)
-            {
-                DbgBackgroundLines.Add($"{worldTileX - scrollX} nt={nametable} col={coarseCol} row={coarseRow} tile=${tile:X2} attr=${attribute:X2} pal={palette} addr=${patternAddress:X4} low=${low:X2} high=${high:X2}");
-            }
 
             int x = worldTileX - scrollX;
             for (int fineX = 0; fineX < 8; fineX++, x++)

@@ -96,11 +96,6 @@ public sealed partial class Ppu : IRenderer
     /// <summary>调色板 RAM（调试用，32 字节）。</summary>
     public byte[] DbgPaletteRam => _paletteRam;
 
-    /// <summary>临时排查开关：打开后在底栏某一行记录每个图块的取图信息。</summary>
-    public bool DbgBackgroundProbe { get; set; }
-
-    /// <summary>探针收集到的行。</summary>
-    public System.Collections.Generic.List<string> DbgBackgroundLines { get; } = new();
 
     private int _scanline;
     private bool _nmiRequested;

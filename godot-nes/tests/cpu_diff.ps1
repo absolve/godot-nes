@@ -11,8 +11,16 @@
 param(
     [string]$Rom,
     [int]$Count = 800,
-    [string]$GodotExe = "E:\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64_console.exe"
+    [string]$GodotExe = $env:GODOT
 )
+# ---- 先确认 Godot 控制台程序在哪儿（没设的话给一句人话，而不是 PowerShell 的报错）----
+if ([string]::IsNullOrWhiteSpace($GodotExe) -or -not (Test-Path $GodotExe)) {
+    Write-Host "[FAIL] 没找到 Godot（.NET 版）的控制台程序。" -ForegroundColor Red
+    Write-Host "       两种指定方式，任选一种：" -ForegroundColor Yellow
+    Write-Host "         1) 设环境变量：`$env:GODOT = '<Godot 目录>\Godot_v4.7.2-stable_mono_win64_console.exe'" -ForegroundColor Yellow
+    Write-Host "         2) 传给脚本：  -GodotExe '<Godot 目录>\Godot_v4.7.2-stable_mono_win64_console.exe'" -ForegroundColor Yellow
+    exit 1
+}
 
 $ErrorActionPreference = 'Stop'
 

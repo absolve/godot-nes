@@ -4,8 +4,8 @@ extends Node
 ## 「GDScript 主界面 → C# EmulatorCore 热路径 → 调试窗口数据链路」整条链是通的。
 ##
 ## 跑法：
-##   & "E:\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64_console.exe" `
-##       --headless --path "E:\godot-nes\godot-nes" res://tests/smoke_test.tscn
+##   & "<Godot 目录>\Godot_v4.7.2-stable_mono_win64_console.exe" `
+##       --headless --path "<项目目录>\godot-nes" res://tests/smoke_test.tscn
 ##
 ## 退出码 0 = 全部通过，1 = 有失败项。
 

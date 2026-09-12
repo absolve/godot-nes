@@ -268,27 +268,6 @@ public partial class EmulatorCore : Node
 						_spriteLog?.WriteLine($"{spriteConsole.FrameCount} line={scanline} eval={evaluated} drawn={drawn} limit={(limitHit ? 1 : 0)}");
 					}
 
-					// 在底栏那一段（扫描线 210，正好在分屏之后）把当前映射出来的 8KB CHR 存一份，
-					// 用来核对"R0=$78 时我到底读到哪 2KB"。
-					if (scanline == 210 && spriteConsole.FrameCount == 4210)
-					{
-						byte[] chrAtBand = new byte[0x2000];
-						for (int ci = 0; ci < 0x2000; ci++)
-						{
-							chrAtBand[ci] = spriteConsole.Ppu.ReadVram((ushort)ci);
-						}
-
-						File.WriteAllBytes(@"E:\godot-nes\.ref\chr-at-band.bin", chrAtBand);
-
-						// 顺便把这一时刻的 4KB 名称表也存下来
-						byte[] ntAtBand = new byte[0x1000];
-						for (int ni = 0; ni < 0x1000; ni++)
-						{
-							ntAtBand[ni] = spriteConsole.Ppu.ReadVram((ushort)(0x2000 + ni));
-						}
-						File.WriteAllBytes(@"E:\godot-nes\.ref\nt-at-band.bin", ntAtBand);
-					}
-
 					if (scanline == 192)
 					{
 						byte[] oam = spriteConsole.Ppu.DbgOam;
@@ -508,17 +487,6 @@ public partial class EmulatorCore : Node
 				_inputLog.WriteLine($"{console.FrameCount} {buttons:X2}");
 				_lastLoggedButtons = buttons;
 			}
-		}
-
-		if (console.FrameCount == 4205)
-		{
-			console.Ppu.DbgBackgroundProbe = true;
-		}
-
-		if (console.FrameCount == 4206 && console.Ppu.DbgBackgroundLines.Count > 0)
-		{
-			File.WriteAllLines(@"E:\godot-nes\.ref\bg-probe.txt", console.Ppu.DbgBackgroundLines);
-			console.Ppu.DbgBackgroundProbe = false;
 		}
 
 		if (_ramTrace != null)

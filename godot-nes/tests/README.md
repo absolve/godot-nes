@@ -1,9 +1,12 @@
-﻿# tests
+# tests
 
 放测试 ROM、冒烟测试和逐阶段验收用的对照数据。
 只有 `roms/` 被 `.gdignore` 排除（ROM 体积大、也不需要变成 Godot 资源）；
 `smoke_test.tscn` 是可被 Godot 加载的场景。
 
+> **关于本文里的路径**：`<Godot 目录>`、`<项目目录>`、`<ROM 路径>` 都是占位符，
+> 替换成你自己机器上的实际路径即可（例如 `<Godot 目录>` 换成你解压 Godot 的位置）。
+> 为了可读性，示例里没有把每条命令都写成 PowerShell 变量，复制后改一下路径就能用。
 ## 目录
 
 - `smoke_test.tscn` / `smoke_test.gd`：无头冒烟测试，144 项断言（含手柄 1 / 手柄 2 输入的端到端检查）。
@@ -37,11 +40,16 @@
 ## 冒烟测试
 
 ```powershell
+# 先设一次 Godot 控制台程序的位置（脚本和下面所有命令都用它）
+# 也可以做成系统环境变量，或给脚本传 -GodotExe
+$env:GODOT = "<Godot 目录>\Godot_v4.7.2-stable_mono_win64_console.exe"
+$godot = $env:GODOT
+
 # 先准备一个 ROM（没有真实 ROM 就用合成的）
 powershell -NoProfile -ExecutionPolicy Bypass -File tests\make_test_rom.ps1
 
-& "E:\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64_console.exe" `
-  --headless --path "E:\godot-nes\godot-nes" "res://tests/smoke_test.tscn"
+& $godot `
+  --headless --path "<项目目录>\godot-nes" "res://tests/smoke_test.tscn"
 echo "退出码 $LASTEXITCODE"      # 0 = 全部通过
 ```
 
@@ -72,9 +80,9 @@ echo "退出码 $LASTEXITCODE"      # 0 = 全部通过
 单独看某个 ROM 的解析结果（不用跑整条链）：
 
 ```powershell
-& "E:\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64_console.exe" `
-  --headless --path "E:\godot-nes\godot-nes" `
-  -- --rom "E:\godot-nes\godot-nes\tests\roms\synthetic-nes20.nes" --rom-info
+& $godot `
+  --headless --path "<项目目录>\godot-nes" `
+  -- --rom "<项目目录>\godot-nes\tests\roms\synthetic-nes20.nes" --rom-info
 ```
 
 ## CPU 差分测试
@@ -112,12 +120,12 @@ echo "退出码 $LASTEXITCODE"      # 0 = 完全一致
 
 ```powershell
 # 1) 复制 fogleman/nes 的 nes 包（只依赖标准库）
-New-Item -ItemType Directory -Force E:\godot-nes\.ref\nesoracle\nes | Out-Null
-Copy-Item E:\nes-master\nes\*.go E:\godot-nes\.ref\nesoracle\nes\ -Force
+New-Item -ItemType Directory -Force <项目目录>\.ref\nesoracle\nes | Out-Null
+Copy-Item <fogleman/nes 源码目录>\nes\*.go <项目目录>\.ref\nesoracle\nes\ -Force
 # 2) 再放两个文件：go.mod 和 main.go（trace 脚手架），以及 nes\oracle_export.go
 #    它们的内容见「实现文档」的 CPU 一节；go.mod 只需 module nesoracle / go 1.21
-cd E:\godot-nes\.ref\nesoracle
-$env:GOCACHE="E:\godot-nes\.ref\gocache"; $env:GOPROXY="off"; $env:GOTOOLCHAIN="local"; $env:GOTELEMETRY="off"
+cd <项目目录>\.ref\nesoracle
+$env:GOCACHE="<项目目录>\.ref\gocache"; $env:GOPROXY="off"; $env:GOTOOLCHAIN="local"; $env:GOTELEMETRY="off"
 go build -o nesoracle.exe .
 ```
 
@@ -272,8 +280,8 @@ echo "退出码 $LASTEXITCODE"      # 0 = 全过
 把它放到 `tests/roms/nestest.nes`，再通过主界面「加载 ROM」或命令行参数装载：
 
 ```powershell
-& "E:\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64_console.exe" `
-  --path "E:\godot-nes\godot-nes" -- --rom "E:\godot-nes\godot-nes\tests\roms\nestest.nes"
+& $godot `
+  --path "<项目目录>\godot-nes" -- --rom "<项目目录>\godot-nes\tests\roms\nestest.nes"
 ```
 
 
@@ -286,13 +294,13 @@ echo "退出码 $LASTEXITCODE"      # 0 = 全过
 
 ```powershell
 # 1) 带窗口跑，操作会被录下来；界面上按 Q 会把当前帧的完整快照存下来
-& $godot --path E:\godot-nes\godot-nes -- `
-    --rom "E:\某游戏.nes" --log-input "E:\godot-nes\.ref\play-input.txt"
+& $godot --path <项目目录>\godot-nes -- `
+    --rom "<ROM 路径>" --log-input "<项目目录>\.ref\play-input.txt"
 
 # 2) 之后任何时候都能用录制文件原样重放（无头、可重复）
-& $godot --headless --path E:\godot-nes\godot-nes -- `
-    --rom "E:\某游戏.nes" --press-file "E:\godot-nes\.ref\play-input.txt" `
-    --dump-frame-after 4206 --dump-frame-indices "E:\godot-nes\.ref\f.idx"
+& $godot --headless --path <项目目录>\godot-nes -- `
+    --rom "<ROM 路径>" --press-file "<项目目录>\.ref\play-input.txt" `
+    --dump-frame-after 4206 --dump-frame-indices "<项目目录>\.ref\f.idx"
 ```
 
 按 `Q` 存下的快照共 6 个文件：`.idx`（画面）、`.nt`（4KB 名称表+属性表）、

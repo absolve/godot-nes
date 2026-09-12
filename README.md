@@ -99,6 +99,9 @@ $godot = "<你的 Godot 目录>\Godot_v4.7.2-stable_mono_win64_console.exe"
 全部测试都是**无头**的，不需要人看屏幕。测试 ROM 由脚本生成（**不含任何商业内容**），测试用的真实 ROM 自己放进 `tests/roms/` 即可（不入库）。
 
 ```powershell
+# 先指定 Godot（.NET 版）控制台程序的位置；测试脚本会自动读这个环境变量
+$env:GODOT = "<Godot 目录>\Godot_v4.7.2-stable_mono_win64_console.exe"
+
 cd godot-nes
 
 # 1) 生成测试 ROM（随时可重建）
@@ -109,7 +112,7 @@ node tests\make_mapper_test_rom.js
 node tests\make_torture_rom.js
 
 # 2) 冒烟测试（147 条断言）
-& $godot --headless --path . "res://tests/smoke_test.tscn"
+& $env:GODOT --headless --path . "res://tests/smoke_test.tscn"
 
 # 3) 四套差分测试
 powershell -NoProfile -ExecutionPolicy Bypass -File tests\cpu_diff.ps1     # CPU 与 fogleman/nes 逐行比 trace
