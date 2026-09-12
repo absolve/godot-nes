@@ -1,0 +1,31 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = tab
+indent_size = 4
+
+[*.cs]
+# C# 也用制表符：Godot 编辑器重新导入"被改动过"的脚本时会把它重排成制表符，
+# 跟它对着干只会反复产生无意义的 diff（详见 godot-nes-implementation.md §2.9）。
+indent_style = tab
+indent_size = 4
+dotnet_sort_system_directives_first = true
+csharp_new_line_before_open_brace = all
+csharp_style_var_for_built_in_types = false:suggestion
+
+[*.gd]
+# GDScript 按 Godot 的惯例用制表符
+indent_style = tab
+indent_size = 4
+
+[*.{tscn,tres,godot,import,csproj,props,targets,ps1,js}]
+indent_style = space
+indent_size = 4
+
+[*.{md,yml,yaml,json}]
+indent_style = space
+indent_size = 2

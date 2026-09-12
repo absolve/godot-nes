@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="18" fill="#15161f"/>
+  <rect x="24" y="10" width="80" height="108" rx="8" fill="#b8342c"/>
+  <rect x="32" y="20" width="64" height="46" rx="4" fill="#e8e6df"/>
+  <rect x="38" y="28" width="52" height="6" rx="3" fill="#2b2d3a"/>
+  <rect x="38" y="40" width="36" height="6" rx="3" fill="#2b2d3a"/>
+  <rect x="38" y="52" width="44" height="6" rx="3" fill="#2b2d3a"/>
+  <rect x="40" y="80" width="12" height="28" rx="3" fill="#2b2d3a"/>
+  <rect x="58" y="80" width="12" height="28" rx="3" fill="#2b2d3a"/>
+  <rect x="76" y="80" width="12" height="28" rx="3" fill="#2b2d3a"/>
+</svg>

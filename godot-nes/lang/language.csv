@@ -1,0 +1,110 @@
+keys,en
+文件,File
+模拟,Emulation
+视图,View
+调试,Debug
+帮助,Help
+语言,Language
+打开 ROM…,Open ROM…
+关闭 ROM,Close ROM
+退出,Quit
+复位,Reset
+暂停 / 继续,Pause / Resume
+单步一条指令,Step One Instruction
+CPU 窗口 (F2),CPU Window (F2)
+PPU 窗口 (F3),PPU Window (F3)
+ROM 信息窗口 (F4),ROM Info Window (F4)
+全屏 (F11),Fullscreen (F11)
+显示状态栏 (F1),Show Status Bar (F1)
+当前帧存成 PNG,Save Current Frame as PNG
+快捷键,Shortcuts
+关于,About
+未装载 ROM,(no ROM)
+帧,Frame
+已暂停,Paused
+运行中,Running
+已装载：,Loaded: 
+装载失败：,Load failed: 
+当前没有装载 ROM,No ROM is loaded
+已关闭 ROM,ROM closed
+已保存：,Saved: 
+保存失败：,Save failed: 
+选择 NES ROM,Select NES ROM
+手柄 1,Gamepad 1
+手柄 2,Gamepad 2
+小键盘 8 / 2 / 4 / 6,Numpad 8 / 2 / 4 / 6
+小键盘 1,Numpad 1
+小键盘 3,Numpad 3
+小键盘 +,Numpad +
+小键盘 0,Numpad 0
+第二个手柄直接用就行（会自动分给手柄 2）,A second gamepad works as-is (it becomes gamepad 2)
+2 人游戏：在标题画面用十字键上 / 下选 2 PLAYER GAME，再按 Start 开始。,2-player game: on the title screen pick 2 PLAYER GAME with Up/Down and then press Start.
+方向键 / WASD,Arrows / WASD
+十字键,D-pad
+功能,Functions
+加载 ROM,Load ROM
+显示 / 隐藏状态栏,Show / hide status bar
+全屏,Fullscreen
+CPU,CPU
+PPU,PPU
+也可以把 .nes 文件直接拖进窗口。,You can also drag a .nes file into the window.
+godot-nes — 用 Godot 4 + C# 实现的 NES 模拟器,godot-nes — a NES emulator built with Godot 4 + C#
+当前进度：CPU / PPU / APU 已实现（Mapper 0，中英文界面）,Progress: CPU / PPU / APU implemented (mapper 0; Chinese/English UI)
+标志位 P（亮 = 置位）,Flags P (lit = set)
+栈顶（SP+1 起 8 字节）,Stack top (8 bytes from SP+1)
+遇到非法指令 $%02X（非官方指令，阶段 7 再补）,Hit illegal opcode $%02X (unofficial; planned for phase 7)
+正常：只用了官方 56 条指令,OK: only official 56 instructions used
+状态与开关,Status & switches
+名称表镜像：%s,Mirroring: %s
+调色板 RAM（$3F00-$3F1F，色块下方是颜色号）,Palette RAM ($3F00-$3F1F; number below each swatch)
+Pattern table（卡带 CHR，4 级灰阶）,Pattern table (cartridge CHR; 4-level grayscale)
+表 $0000,Table $0000
+表 $1000,Table $1000
+VBlank,VBlank
+精灵0命中,Sprite 0 hit
+精灵溢出,Sprite overflow
+NMI 使能,NMI enabled
+渲染开,Rendering on
+8x16 精灵,8x16 sprites
+VRAM 地址,VRAM address
+增量,Increment
+背景表,BG pattern
+精灵表,Sprite pattern
+ROM 信息,ROM Info
+文件路径,File path
+(未装载 ROM),(no ROM loaded)
+解析提示,Parser notes
+头部解析没有发现问题,No problems found in the header
+大小,Size
+格式,Format
+子 mapper,Submapper
+PRG ROM（程序块）,PRG ROM (program)
+CHR ROM（图案块）,CHR ROM (pattern)
+名称表镜像,Mirroring
+制式,TV system
+平台,Console
+电池存档,Battery
+向量表,Vectors
+映射器实现,Mapper support
+字节,bytes
+有,Yes
+无,No
+已实现,Implemented
+未实现（计划阶段 7）,Not implemented (phase 7)
+—（iNES 1.0 没有这个字段）,— (no such field in iNES 1.0)
+无 CHR ROM，用 %d KB CHR RAM,No CHR ROM - uses %d KB CHR RAM
+（另有电池 CHR-NVRAM %d KB）,(plus battery CHR-NVRAM %d KB)
+%d KB（另有电池 NVRAM %d KB）,%d KB (plus %d KB battery NVRAM)
+%d KB（%d x 16KB）,%d KB (%d x 16KB)
+%d KB（%d x 8KB）,%d KB (%d x 8KB)
+水平,Horizontal
+垂直,Vertical
+四屏,Four-screen
+单屏(低),Single-screen (lower)
+单屏(高),Single-screen (upper)
+多制式,Multi-region
+扩展平台,Extended console
+NES 帧/秒,NES fps
+显示帧/秒,display fps
+模拟,Emu
+上传,Blit

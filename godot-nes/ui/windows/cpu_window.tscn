@@ -1,0 +1,154 @@
+[gd_scene format=3 uid="uid://cuosql28asxms"]
+
+[ext_resource type="Script" uid="uid://c0318x41ljyar" path="res://ui/windows/cpu_window.gd" id="1_cpu"]
+
+[node name="CpuWindow" type="Window" unique_id=671263444]
+oversampling_override = 1.0
+title = "CPU"
+position = Vector2i(0, 36)
+size = Vector2i(430, 340)
+visible = false
+content_scale_mode = 1
+content_scale_aspect = 4
+script = ExtResource("1_cpu")
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=1380220991]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="Margin" unique_id=1720025224]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RegisterGrid" type="GridContainer" parent="Margin/VBox" unique_id=1839960407]
+layout_mode = 2
+theme_override_constants/h_separation = 14
+theme_override_constants/v_separation = 4
+columns = 4
+
+[node name="PcCaption" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=341783472]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "PC"
+
+[node name="PcValue" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=807870683]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+text = "----"
+
+[node name="SpCaption" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=43289781]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "SP"
+
+[node name="SpValue" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=585180273]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+text = "--"
+
+[node name="ACaption" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1365921382]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "A"
+
+[node name="AValue" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=244709750]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+text = "--"
+
+[node name="PCaption" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1686949425]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "P"
+
+[node name="PValue" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=569001984]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+text = "--"
+
+[node name="XCaption" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1424576326]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "X"
+
+[node name="XValue" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1748758748]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+text = "--"
+
+[node name="CyclesCaption" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=2010579018]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "CYC"
+
+[node name="CyclesValue" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1723630925]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+text = "0"
+
+[node name="YCaption" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1222342827]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "Y"
+
+[node name="YValue" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=284644034]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+text = "--"
+
+[node name="Sep1" type="HSeparator" parent="Margin/VBox" unique_id=7441632]
+layout_mode = 2
+
+[node name="FlagsCaption" type="Label" parent="Margin/VBox" unique_id=410866566]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "标志位 P（亮 = 置位）"
+
+[node name="FlagsLabel" type="RichTextLabel" parent="Margin/VBox" unique_id=1213999654]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="Sep2" type="HSeparator" parent="Margin/VBox" unique_id=489411624]
+layout_mode = 2
+
+[node name="StackCaption" type="Label" parent="Margin/VBox" unique_id=300526375]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "栈顶（SP+1 起 8 字节）"
+
+[node name="StackLabel" type="Label" parent="Margin/VBox" unique_id=935010983]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+text = "--"
+
+[node name="Sep3" type="HSeparator" parent="Margin/VBox" unique_id=1633074724]
+layout_mode = 2
+
+[node name="StatusLabel" type="RichTextLabel" parent="Margin/VBox" unique_id=815468982]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = true
+scroll_active = false

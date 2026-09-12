@@ -15,3 +15,68 @@ export_credentials.cfg
 .mono/
 data_*/
 mono_crash.*.json
+*.import
+
+# 本地开发用的缓存与 IDE 配置
+.vscode/
+.nuget-packages/
+
+# 验证用的临时目录：差分测试的参照实现（第三方源码）、Go 缓存、trace 产物
+# .ref/ 里的参考实现、Go 缓存、以及排查时产生的大文件都不入库；
+# 但**我们自己写的排查脚本要入库** —— 否则测试文档里引用的工具克隆下来根本没有。
+.ref/*
+!.ref/*.js
+!.ref/*.mjs
+!.ref/*.lua
+!.ref/README.md
+
+# 测试 ROM 与调试产物不入库（版权原因）；
+# 合成测试 ROM 可以用 godot-nes/tests/make_test_rom.ps1 随时重新生成。
+godot-nes/tests/roms/*
+!godot-nes/tests/roms/.gitkeep
+
+# ---------------------------------------------------------------- 防御性忽略
+# 这些现在目录里没有，但很容易被下一步操作带进来（手动 dotnet build、IDE、
+# 模拟器存档、我自己排查时导出的中间文件），一律挡在库外。
+
+# C# / .NET 构建产物（Godot 自己会用 .godot/mono，这里是防手动构建）
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# 日志
+*.log
+logs/
+
+# ROM：任何位置的 .nes 都不入库（测试 ROM 由 tests/make_*.js 随时重新生成）
+*.nes
+!godot-nes/tests/roms/.gitkeep
+
+# 模拟器存档 / 录像（FCEUX 等）
+*.fc0
+*.fc1
+*.fc2
+*.fc3
+*.fc4
+*.fc5
+*.fc6
+*.fc7
+*.fc8
+*.fc9
+*.fcs
+*.fm2
+*.sav
+*.state
+
+# 排查时导出的中间文件：帧索引、PCM、原始二进制、追踪日志
+*.idx
+*.pcm
+*.raw
+*.sym
+
+# 操作系统杂项
+.DS_Store
+Thumbs.db
+desktop.ini

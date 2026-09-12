@@ -1,0 +1,211 @@
+[gd_scene format=3 uid="uid://bl4mgky8nkhjb"]
+
+[ext_resource type="Script" uid="uid://b27lshkwerpqd" path="res://ui/windows/ppu_window.gd" id="1_ppu"]
+[ext_resource type="Script" uid="uid://cc82drcrqaugt" path="res://script/PatternTablePreview.cs" id="2_preview"]
+
+[node name="PpuWindow" type="Window" unique_id=945676661]
+oversampling_override = 1.0
+title = "PPU"
+position = Vector2i(0, 36)
+size = Vector2i(440, 580)
+visible = false
+content_scale_mode = 1
+content_scale_aspect = 1
+script = ExtResource("1_ppu")
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=681154902]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="Margin" unique_id=763851244]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RegisterGrid" type="GridContainer" parent="Margin/VBox" unique_id=179843742]
+layout_mode = 2
+theme_override_constants/h_separation = 14
+theme_override_constants/v_separation = 4
+columns = 4
+
+[node name="CtrlCaption" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=302346458]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "CTRL"
+
+[node name="CtrlValue" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1604762287]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+text = "--"
+
+[node name="MaskCaption" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=967221885]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "MASK"
+
+[node name="MaskValue" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=109775823]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+text = "--"
+
+[node name="StatusCaption" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1823018370]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "STATUS"
+
+[node name="StatusValue" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1141812963]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+text = "--"
+
+[node name="OamCaption" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1018845313]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "OAMADDR"
+
+[node name="OamValue" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=227522219]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+text = "--"
+
+[node name="VramCaption" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1485565378]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "VRAM 地址"
+
+[node name="VramValue" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1326283967]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+text = "----"
+
+[node name="IncrementCaption" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1568970696]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "增量"
+
+[node name="IncrementValue" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1409809905]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+text = "1"
+
+[node name="BgBaseCaption" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=165891028]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "背景表"
+
+[node name="BgBaseValue" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1566916016]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+text = "$0000"
+
+[node name="SpriteBaseCaption" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1100784984]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "精灵表"
+
+[node name="SpriteBaseValue" type="Label" parent="Margin/VBox/RegisterGrid" unique_id=1918885975]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MonoLabel"
+text = "$0000"
+
+[node name="Sep1" type="HSeparator" parent="Margin/VBox" unique_id=713396339]
+layout_mode = 2
+
+[node name="FlagsCaption" type="Label" parent="Margin/VBox" unique_id=1178045248]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "状态与开关"
+
+[node name="FlagsLabel" type="RichTextLabel" parent="Margin/VBox" unique_id=880770683]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="Sep2" type="HSeparator" parent="Margin/VBox" unique_id=463956943]
+layout_mode = 2
+
+[node name="PaletteCaption" type="Label" parent="Margin/VBox" unique_id=2104952111]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "调色板 RAM（$3F00-$3F1F，色块下方是颜色号）"
+
+[node name="PaletteGrid" type="GridContainer" parent="Margin/VBox" unique_id=851364263]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 4
+columns = 8
+
+[node name="Sep3" type="HSeparator" parent="Margin/VBox" unique_id=462977735]
+layout_mode = 2
+
+[node name="PreviewCaption" type="Label" parent="Margin/VBox" unique_id=1189225007]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "Pattern table（卡带 CHR，4 级灰阶）"
+
+[node name="PreviewBox" type="HBoxContainer" parent="Margin/VBox" unique_id=1133556206]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="Table0Column" type="VBoxContainer" parent="Margin/VBox/PreviewBox" unique_id=525289779]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Table0Caption" type="Label" parent="Margin/VBox/PreviewBox/Table0Column" unique_id=227663028]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "表 $0000"
+
+[node name="Table0" type="TextureRect" parent="Margin/VBox/PreviewBox/Table0Column" unique_id=2046861786]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(140, 140)
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("2_preview")
+
+[node name="Table1Column" type="VBoxContainer" parent="Margin/VBox/PreviewBox" unique_id=479447226]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Table1Caption" type="Label" parent="Margin/VBox/PreviewBox/Table1Column" unique_id=348483912]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "表 $1000"
+
+[node name="Table1" type="TextureRect" parent="Margin/VBox/PreviewBox/Table1Column" unique_id=1866347360]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(140, 140)
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("2_preview")
+TableIndex = 1

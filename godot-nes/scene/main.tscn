@@ -1,0 +1,77 @@
+[gd_scene format=3 uid="uid://puoublftk2sl"]
+
+[ext_resource type="Script" uid="uid://bmus1ru357yvt" path="res://ui/main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://bdvsgcfagamtl" path="res://script/EmulatorCore.cs" id="2_core"]
+[ext_resource type="Script" uid="uid://dvc054qjhgvq0" path="res://script/Display.cs" id="3_display"]
+[ext_resource type="Script" uid="uid://b2b58fqshhlch" path="res://script/InputAdapter.cs" id="4_input"]
+[ext_resource type="Script" uid="uid://dhk7e54sov5x6" path="res://script/NesAudioPlayer.cs" id="5_audio"]
+[ext_resource type="PackedScene" uid="uid://cuosql28asxms" path="res://ui/windows/cpu_window.tscn" id="6_cpu_window"]
+[ext_resource type="PackedScene" uid="uid://bl4mgky8nkhjb" path="res://ui/windows/ppu_window.tscn" id="7_ppu_window"]
+[ext_resource type="PackedScene" uid="uid://h4440hvv1upj" path="res://ui/windows/rom_window.tscn" id="8_rom_window"]
+
+[node name="Main" type="Node" unique_id=2049417532]
+script = ExtResource("1_main")
+
+[node name="Ui" type="CanvasLayer" parent="." unique_id=801210186]
+
+[node name="Root" type="VBoxContainer" parent="Ui" unique_id=1781908839]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="MenuBar" type="MenuBar" parent="Ui/Root" unique_id=1084619781]
+layout_mode = 2
+prefer_global_menu = false
+
+[node name="Display" type="TextureRect" parent="Ui/Root" unique_id=1162080821]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("3_display")
+
+[node name="StatusBar" type="PanelContainer" parent="Ui/Root" unique_id=1961393955]
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="Ui/Root/StatusBar" unique_id=2048401335]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "godot-nes"
+autowrap_mode = 3
+
+[node name="DebugWindows" type="Node" parent="." unique_id=628379735]
+
+[node name="CpuWindow" parent="DebugWindows" unique_id=2008393964 instance=ExtResource("6_cpu_window")]
+
+[node name="PpuWindow" parent="DebugWindows" unique_id=1372314972 instance=ExtResource("7_ppu_window")]
+
+[node name="RomWindow" parent="DebugWindows" unique_id=970732732 instance=ExtResource("8_rom_window")]
+content_scale_aspect = 1
+
+[node name="EmulatorCore" type="Node" parent="." unique_id=12735696]
+script = ExtResource("2_core")
+
+[node name="InputAdapter" type="Node" parent="." unique_id=105778461]
+unique_name_in_owner = true
+script = ExtResource("4_input")
+
+[node name="NesAudioPlayer" type="AudioStreamPlayer" parent="." unique_id=1470790764]
+unique_name_in_owner = true
+script = ExtResource("5_audio")
+
+[node name="RomFileDialog" type="FileDialog" parent="." unique_id=589959450]
+oversampling_override = 1.0
+title = "Open a File"
+position = Vector2i(0, 36)
+size = Vector2i(900, 600)
+content_scale_mode = 1
+content_scale_aspect = 4
+ok_button_text = "打开"
+file_mode = 0
+filters = PackedStringArray("*.nes ; NES ROM")

@@ -1,0 +1,63 @@
+[gd_scene format=3 uid="uid://h4440hvv1upj"]
+
+[ext_resource type="Script" uid="uid://bstbeibyvkros" path="res://ui/windows/rom_window.gd" id="1_rom"]
+
+[node name="RomWindow" type="Window" unique_id=605441269]
+title = "ROM 信息"
+size = Vector2i(540, 500)
+visible = false
+content_scale_mode = 1
+content_scale_aspect = 4
+script = ExtResource("1_rom")
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=1705795458]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="Margin" unique_id=1882982013]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PathCaption" type="Label" parent="Margin/VBox" unique_id=1220613977]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "文件路径"
+
+[node name="PathLabel" type="Label" parent="Margin/VBox" unique_id=1816553410]
+unique_name_in_owner = true
+layout_mode = 2
+text = "(未装载 ROM)"
+autowrap_mode = 3
+
+[node name="Sep1" type="HSeparator" parent="Margin/VBox" unique_id=1479462426]
+layout_mode = 2
+
+[node name="InfoGrid" type="GridContainer" parent="Margin/VBox" unique_id=1012673908]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 14
+theme_override_constants/v_separation = 4
+columns = 2
+
+[node name="Sep2" type="HSeparator" parent="Margin/VBox" unique_id=516119792]
+layout_mode = 2
+
+[node name="WarningsCaption" type="Label" parent="Margin/VBox" unique_id=1087791374]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "解析提示"
+
+[node name="WarningsLabel" type="RichTextLabel" parent="Margin/VBox" unique_id=1656195134]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
