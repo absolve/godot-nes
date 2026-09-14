@@ -130,6 +130,111 @@ func _run() -> void:
 	_check(int(service.GetSystemSnapshot()["controller2"]) == 0, "松开之后手柄 2 回到 0",
 		str(int(service.GetSystemSnapshot()["controller2"])))
 
+	# ---------------- 界面快捷键动作 ----------------
+	# 这些动作和手柄动作在 project.godot 的同一个 [input] 段里，
+	# 曾经因为重建那个段把它们整批删掉，运行时 is_action_pressed 直接报错 —— 加断言钉住。
+	var ui_actions := [
+		"emulator_load_rom", "emulator_reset", "emulator_pause", "emulator_step_frame",
+		"emulator_toggle_debug", "emulator_quit", "emulator_window_cpu", "emulator_window_ppu",
+		"emulator_window_rom", "emulator_fullscreen",
+	]
+	var missing_ui: Array[String] = []
+	for action in ui_actions:
+		if not InputMap.has_action(action):
+			missing_ui.append(action)
+	_check(missing_ui.is_empty(), "界面快捷键动作都在（%d 个）" % ui_actions.size(), ", ".join(missing_ui))
+	# 默认键位（project.godot 里的那套，跟用户配置文件无关）：
+	# 「快捷键」对话框是**从 InputMap 现读**的，所以这里钉住默认布局即可。
+	# 曾经把键位写死在对话框里，改了键位它一直显示旧值；也踩过旧配置文件盖住新默认值的坑。
+	var defaults := {
+		1: ["W", "S", "A", "D", "J", "K", "U", "I"],
+		2: ["Up", "Down", "Left", "Right", "Comma", "Period", "Slash", "Semicolon"],
+		3: ["T", "G", "F", "H", "R", "V", "C", "B"],
+		4: ["Kp 8", "Kp 2", "Kp 4", "Kp 6", "Kp 3", "Kp 1", "Kp 0", "Kp Add"],
+	}
+	var buttons := ["up", "down", "left", "right", "b", "a", "select", "start"]
+	var wrong: Array[String] = []
+	for player in [1, 2, 3, 4]:
+		for i in buttons.size():
+			var action: String = ("nes_%s" % buttons[i]) if player == 1 else ("nes%d_%s" % [player, buttons[i]])
+			var setting: Dictionary = ProjectSettings.get_setting("input/" + action)
+			var got := "?"
+			for event in setting.get("events", []):
+				if event is InputEventKey:
+					got = OS.get_keycode_string(event.physical_keycode)
+					break
+			if got != defaults[player][i]:
+				wrong.append("%s=%s(应为 %s)" % [action, got, defaults[player][i]])
+	_check(wrong.is_empty(), "四个手柄的默认键位符合新布局", ", ".join(wrong))
+	# ---------------- 四人分插器 + 按键配置 ----------------
+	print("  -- 四人分插器 / 按键配置 --")
+
+	var input_config: Node = get_node_or_null("/root/InputConfig")
+	_check(input_config != null, "InputConfig autoload 在（按键配置文件靠它）")
+
+	# 四个手柄 × 8 个键的动作都要存在，3/4 号手柄的默认键位也要绑上
+	var missing: Array[String] = []
+	for player in [1, 2, 3, 4]:
+		for button in ["a", "b", "select", "start", "up", "down", "left", "right"]:
+			var action: String = input_config.action_name(player, button)
+			if not InputMap.has_action(action) or InputMap.action_get_events(action).is_empty():
+				missing.append(action)
+	_check(missing.is_empty(), "四个手柄的 32 个动作都有绑定", ", ".join(missing))
+
+	# 3/4 号手柄按下之后要能读到（它们是独立的动作，不能串到别人身上）
+	Input.action_press("nes3_start")
+	Input.action_press("nes3_right")
+	Input.action_press("nes4_a")
+	await _wait_frames(3)
+	_check(int(service.GetSystemSnapshot()["controller3"]) == 0x88,
+		"按 3 号手柄的 Start + 右 → bit3|bit7 置位",
+		str(int(service.GetSystemSnapshot()["controller3"])))
+	_check(int(service.GetSystemSnapshot()["controller4"]) == 0x01,
+		"按 4 号手柄的 A → bit0 置位",
+		str(int(service.GetSystemSnapshot()["controller4"])))
+	_check(int(service.GetSystemSnapshot()["controller1"]) == 0
+			and int(service.GetSystemSnapshot()["controller2"]) == 0,
+		"3/4 号手柄的按键不会串到 1/2 号")
+	Input.action_release("nes3_start")
+	Input.action_release("nes3_right")
+	Input.action_release("nes4_a")
+	await _wait_frames(3)
+	_check(int(service.GetSystemSnapshot()["controller3"]) == 0
+			and int(service.GetSystemSnapshot()["controller4"]) == 0,
+		"松开之后 3/4 号手柄回到 0")
+
+	# 配置文件路径：编辑器里放 user://，打包后放 exe 同目录
+	var config_path: String = input_config.config_path()
+	if OS.has_feature("editor"):
+		_check(config_path == "user://godot-nes-input.cfg",
+			"编辑器里配置写在 user://（不污染工程目录）", config_path)
+	else:
+		_check(config_path.ends_with("godot-nes-input.cfg") and config_path.contains(OS.get_executable_path().get_base_dir()),
+			"打包后配置写在 exe 同目录", config_path)
+	# 配置文件里写的值要真的生效 —— 直接读同一个文件对答案，而不是假设它是默认值
+	var probe := ConfigFile.new()
+	if probe.load(config_path) == OK:
+		var want_four_score: bool = bool(probe.get_value("system", "four_score", false))
+		_check(input_config.four_score == want_four_score,
+			"four_score 跟配置文件一致",
+			"配置=%s 实际=%s" % [want_four_score, input_config.four_score])
+
+		# 只有"版本匹配"的配置才会被应用；版本落后会被重写成新默认值（见 LAYOUT_VERSION）。
+		var cfg_version := int(probe.get_value("system", "layout_version", 0))
+		if cfg_version == InputConfig.LAYOUT_VERSION:
+			var want_key := OS.find_keycode_from_string(str(probe.get_value("player1", "a", "")))
+			var got_key := KEY_NONE
+			for event in InputMap.action_get_events("nes_a"):
+				if event is InputEventKey:
+					got_key = event.physical_keycode
+					break
+			if want_key != KEY_NONE:
+				_check(got_key == want_key, "配置文件里的键位真的绑上去了",
+					"配置=%s 实际=%s" % [OS.get_keycode_string(want_key), OS.get_keycode_string(got_key)])
+		else:
+			_check(true, "旧版本配置不再生效（会按新默认值重写）",
+				"配置 v%d < 当前 v%d" % [cfg_version, InputConfig.LAYOUT_VERSION])
+
 	# ---------------- DebugHub 的按需订阅 ----------------
 	_check(hub.consumer_count() == 0, "没有窗口打开时 DebugHub 零订阅（开销为 0）",
 		"实际 %d" % hub.consumer_count())

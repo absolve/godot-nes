@@ -39,11 +39,29 @@ public partial class InputAdapter : Node
 		("nes2_right", NesButton.Right),
 	};
 
-	/// <summary>把手柄 1 / 手柄 2 的当前状态写进总线。</summary>
+	/// <summary>3/4 号手柄的映射：键位由输入配置决定（打包后是 exe 同目录的 cfg）。</summary>
+	private static readonly (string Action, NesButton Button)[] Mapping3 =
+	{
+		("nes3_a", NesButton.A), ("nes3_b", NesButton.B), ("nes3_select", NesButton.Select), ("nes3_start", NesButton.Start),
+		("nes3_up", NesButton.Up), ("nes3_down", NesButton.Down), ("nes3_left", NesButton.Left), ("nes3_right", NesButton.Right),
+	};
+
+	private static readonly (string Action, NesButton Button)[] Mapping4 =
+	{
+		("nes4_a", NesButton.A), ("nes4_b", NesButton.B), ("nes4_select", NesButton.Select), ("nes4_start", NesButton.Start),
+		("nes4_up", NesButton.Up), ("nes4_down", NesButton.Down), ("nes4_left", NesButton.Left), ("nes4_right", NesButton.Right),
+	};
+
+	/// <summary>
+	/// 把四个手柄的当前状态写进总线。3/4 号手柄只在插了 Four Score（配置文件里开）时
+	/// 才会被游戏读到 —— 没开的时候写进去也没影响，游戏根本读不到那一段。
+	/// </summary>
 	public void PushTo(NesConsole console)
 	{
 		Push(console.Bus.Controller1, Mapping);
 		Push(console.Bus.Controller2, Mapping2);
+		Push(console.Bus.Controller3, Mapping3);
+		Push(console.Bus.Controller4, Mapping4);
 	}
 
 	private static void Push(Controller pad, (string Action, NesButton Button)[] mapping)

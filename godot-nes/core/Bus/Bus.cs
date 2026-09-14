@@ -34,6 +34,22 @@ public sealed class Bus : IBus
 
 	public Controller Controller2 { get; } = new();
 
+	/// <summary>Four Score 的第三、第四个手柄（插上扩展器才有意义）。</summary>
+	public Controller Controller3 { get; } = new();
+
+	public Controller Controller4 { get; } = new();
+
+	/// <summary>
+	/// 是否插了 Four Score（四人分插器）。
+	///
+	/// 插上之后两个口各复用一组：$4016 先出 1P 再出 3P、$4017 先出 2P 再出 4P，
+	/// 数据都在 bit0；bit1 在前 8 位是 0、第 8-23 位是 1（游戏靠它识别扩展器）。
+	/// </summary>
+	public bool FourScore { get; set; }
+
+	/// <summary>Four Score 下每个口读到第几位了（写 $4016 的选通会清零）。</summary>
+	private readonly int[] _fourScoreBit = new int[2];
+
 	/// <summary>见 <see cref="IBus.OamDmaStallPending"/>：写 $4014 时置位，由 CPU 取走。</summary>
 	public bool OamDmaStallPending { get; set; }
 
@@ -54,9 +70,9 @@ public sealed class Bus : IBus
 			case 0x4015:
 				return Apu.ReadStatus();
 			case 0x4016:
-				return Controller1.Read();
+				return FourScore ? ReadFourScore(0) : Controller1.Read();
 			case 0x4017:
-				return Controller2.Read();
+				return FourScore ? ReadFourScore(1) : Controller2.Read();
 			case < 0x4020:
 				return 0x00;   // $4018-$401F 是测试寄存器，未使用
 			case < 0x6000:
@@ -87,6 +103,13 @@ public sealed class Bus : IBus
 			case 0x4016:
 				Controller1.Write(value);
 				Controller2.Write(value);
+
+				if ((value & 0x01) != 0)
+				{
+					_fourScoreBit[0] = 0;      // 选通：Four Score 的读数位置一起归零
+					_fourScoreBit[1] = 0;
+				}
+
 				break;
 			case 0x4017:
 				Apu.WriteFrameCounter(value);
@@ -129,5 +152,41 @@ public sealed class Bus : IBus
 
 		Ppu.WriteOamDma(pageData);
 		OamDmaStallPending = true;
+	}
+
+	/// <summary>
+	/// Four Score 的一个口的读操作。协议（参照 nesdev + FCEUX 的 ReadGP）：
+	///
+	///   bit0 = 当前那一段的手柄数据位（0-7 位是 1P/2P，8-15 位是 3P/4P，16 位之后为 0）
+	///   bit1 = 前 8 位是 0、第 8-23 位是 1 —— 游戏就是靠这一位判断"插了四人分插器"
+	///   第 19 位（口 1）/第 18 位（口 2）额外把 bit0 置 1，兼容按 FCEUX 方式识别的游戏
+	/// </summary>
+	private byte ReadFourScore(int port)
+	{
+		int bit = _fourScoreBit[port]++;
+		Controller pad = bit switch
+		{
+			< 8 => port == 0 ? Controller1 : Controller2,
+			< 16 => port == 0 ? Controller3 : Controller4,
+			_ => null!,
+		};
+
+		if (pad is null)
+		{
+			return 0;                              // 16 位之后没有数据了
+		}
+
+		byte result = (byte)((pad.Buttons >> (bit & 7)) & 0x01);
+		if (bit >= 8)
+		{
+			result |= 0x02;                        // 第二组：bit1 = 1
+		}
+
+		if (bit == 19 - port)
+		{
+			result |= 0x01;                        // 识别位
+		}
+
+		return result;
 	}
 }

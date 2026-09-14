@@ -30,8 +30,7 @@ ROM 信息窗口 (F4),ROM Info Window (F4)
 已保存：,Saved: 
 保存失败：,Save failed: 
 选择 NES ROM,Select NES ROM
-手柄 1,Gamepad 1
-手柄 2,Gamepad 2
+手柄 %d,Gamepad %d
 小键盘 8 / 2 / 4 / 6,Numpad 8 / 2 / 4 / 6
 小键盘 1,Numpad 1
 小键盘 3,Numpad 3
@@ -108,3 +107,6 @@ NES 帧/秒,NES fps
 显示帧/秒,display fps
 模拟,Emu
 上传,Blit
+小键盘 ,Numpad 
+要游戏支持四人分插器（Four Score）才有意义,Needs a Four Score adapter in the game to matter
+打包后键位可以用 exe 同目录的 godot-nes-input.cfg 修改。,After packaging you can edit the keys in godot-nes-input.cfg next to the exe.

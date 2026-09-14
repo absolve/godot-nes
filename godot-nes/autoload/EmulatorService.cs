@@ -174,6 +174,9 @@ public partial class EmulatorService : Node
 			// 和 $4016 的移位顺序一致。调试界面和"输入到底有没有传进去"的测试都用它。
 			{ "controller1", Console.Bus.Controller1.Buttons },
 			{ "controller2", Console.Bus.Controller2.Buttons },
+			{ "controller3", Console.Bus.Controller3.Buttons },
+			{ "controller4", Console.Bus.Controller4.Buttons },
+			{ "four_score", Console.Bus.FourScore },
 		};
 	}
 

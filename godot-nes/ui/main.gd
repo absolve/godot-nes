@@ -67,6 +67,9 @@ func _ready() -> void:
 		push_error("[godot-nes] 主界面找不到 EmulatorService 自动加载。")
 
 	_build_menus()
+	# 输入配置（打包后来自 exe 同目录的 cfg）：四人分插器开关交给核心
+	_core.SetFourScore(InputConfig.four_score)
+
 	_configure_file_dialog()
 	_watch_windows()
 	_update_window_menu_state()
@@ -497,37 +500,91 @@ func _show_about() -> void:
 
 
 func _show_shortcuts() -> void:
-	var lines := [
-		tr("手柄 1"),
-		"  " + tr("方向键 / WASD") + "    " + tr("十字键"),
-		"  X / K              A",
-		"  Z / J              B",
-		"  Enter              Start",
-		"  Backspace          Select",
-		"",
-		tr("手柄 2"),
-		"  " + tr("小键盘 8 / 2 / 4 / 6") + "    " + tr("十字键"),
-		"  " + tr("小键盘 1") + "              A",
-		"  " + tr("小键盘 3") + "              B",
-		"  " + tr("小键盘 +") + "              Start",
-		"  " + tr("小键盘 0") + "              Select",
-		"  " + tr("第二个手柄直接用就行（会自动分给手柄 2）"),
-		"",
-		tr("功能"),
-		"  O        " + tr("加载 ROM"),
-		"  R        " + tr("复位"),
-		"  P        " + tr("暂停 / 继续"),
-		"  F10      " + tr("单步一条指令"),
-		"  F1       " + tr("显示 / 隐藏状态栏"),
-		"  F2       " + tr("CPU"),
-		"  F3       " + tr("PPU"),
-		"  F11      " + tr("全屏"),
-		"  Esc      " + tr("退出"),
-		"",
-		tr("2 人游戏：在标题画面用十字键上 / 下选 2 PLAYER GAME，再按 Start 开始。"),
-		tr("也可以把 .nes 文件直接拖进窗口。"),
-	]
+	# 键位**从 InputMap 现读**，不写死 —— 之前写死过一次，改键位之后这里一直显示旧值。
+	var lines := []
+	for player in [1, 2, 3, 4]:
+		var keys := _player_key_texts(player)
+		lines.append(tr("手柄 %d") % player)
+		lines.append("  %-20s %s" % [keys["up"] + " / " + keys["down"] + " / " + keys["left"] + " / " + keys["right"], tr("十字键")])
+		lines.append("  %-20s A" % keys["a"])
+		lines.append("  %-20s B" % keys["b"])
+		lines.append("  %-20s Start" % keys["start"])
+		lines.append("  %-20s Select" % keys["select"])
+		if player >= 3:
+			lines.append("  " + tr("要游戏支持四人分插器（Four Score）才有意义"))
+		lines.append("")
+
+	lines.append(tr("功能"))
+	for entry in SHORTCUT_ACTIONS:
+		lines.append("  %-20s %s" % [_first_key_text(entry[0]), tr(entry[1])])
+
+	lines.append("")
+	lines.append(tr("2 人游戏：在标题画面用十字键上 / 下选 2 PLAYER GAME，再按 Start 开始。"))
+	lines.append(tr("也可以把 .nes 文件直接拖进窗口。"))
+	lines.append(tr("打包后键位可以用 exe 同目录的 godot-nes-input.cfg 修改。"))
 	_show_dialog(tr("快捷键"), "\n".join(lines))
+
+
+## 「快捷键」对话框里列出的功能项：动作名 + 说明。动作名和 project.godot 里的一致。
+const SHORTCUT_ACTIONS := [
+	["emulator_load_rom", "加载 ROM"],
+	["emulator_reset", "复位"],
+	["emulator_pause", "暂停 / 继续"],
+	["emulator_step_frame", "单步一条指令"],
+	["emulator_toggle_debug", "显示 / 隐藏状态栏"],
+	["emulator_window_cpu", "CPU"],
+	["emulator_window_ppu", "PPU"],
+	["emulator_window_rom", "ROM 信息"],
+	["emulator_fullscreen", "全屏"],
+	["emulator_quit", "退出"],
+]
+
+
+## 一个手柄八个键的显示文本。
+func _player_key_texts(player: int) -> Dictionary:
+	var out := {}
+	for button in ["up", "down", "left", "right", "a", "b", "select", "start"]:
+		out[button] = _first_key_text(InputConfig.action_name(player, button))
+	return out
+
+
+## 取某个动作绑定的第一个**键盘**键，返回给人看的名字。
+func _first_key_text(action: String) -> String:
+	if not InputMap.has_action(action):
+		return "—"
+	for event in InputMap.action_get_events(action):
+		if event is InputEventKey:
+			return _key_text(event.physical_keycode)
+	return "—"
+
+
+## 方向键用符号、小键盘加中文前缀，其他直接用 Godot 的名字（W / Enter / F10…）。
+func _key_text(keycode: int) -> String:
+	match keycode:
+		KEY_UP:
+			return "↑"
+		KEY_DOWN:
+			return "↓"
+		KEY_LEFT:
+			return "←"
+		KEY_RIGHT:
+			return "→"
+	match keycode:
+		KEY_COMMA:
+			return ","
+		KEY_PERIOD:
+			return "."
+		KEY_SLASH:
+			return "/"
+		KEY_SEMICOLON:
+			return ";"
+		KEY_SHIFT:
+			return "Shift"
+
+	var name := OS.get_keycode_string(keycode)
+	if name.begins_with("Kp "):
+		return tr("小键盘 ") + name.substr(3)
+	return name
 
 
 func _show_dialog(title: String, text: String) -> void:

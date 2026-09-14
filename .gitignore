@@ -80,3 +80,6 @@ logs/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Godot 的用户数据目录（正常在 %APPDATA%，万一被建到工程里也不要入库）
+godot-nes/Godot/

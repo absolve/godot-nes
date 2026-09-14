@@ -95,6 +95,9 @@ public partial class EmulatorCore : Node
 
 	private int _lastLoggedButtons = -1;
 
+	/// <summary>是否插了四人分插器（见 SetFourScore）。</summary>
+	private bool _fourScore;
+
 	private readonly List<(long Frame, int Buttons)> _recordedPresses = new();
 
 	private int _recordedIndex;
@@ -353,7 +356,9 @@ public partial class EmulatorCore : Node
 		for (int frame = 0; frame < _traceFromFrame; frame++)
 		{
 			ApplyScriptedPresses(console);
-			console.StepFrame();
+			ApplyFourScore();
+
+		console.StepFrame();
 		}
 
 		using (var writer = new StreamWriter(path) { AutoFlush = true })
@@ -464,6 +469,24 @@ public partial class EmulatorCore : Node
 	/// 清空画面。关闭 ROM 时由 GDScript 侧调用 —— 卸载卡带之后 CPU 不再跑，
 	/// 不清屏的话上一帧会一直挂在屏幕上，看着像还装着 ROM。
 	/// </summary>
+	/// <summary>
+	/// 开关四人分插器（Four Score）。由 GDScript 侧按输入配置在启动时调用；
+	/// 之后每帧开跑之前会同步到总线上（装载 ROM 的时机不影响）。
+	/// </summary>
+	public void SetFourScore(bool enabled)
+	{
+		_fourScore = enabled;
+		ApplyFourScore();
+	}
+
+	private void ApplyFourScore()
+	{
+		if (_service is not null && _service.HasRom && _service.Console.Bus.FourScore != _fourScore)
+		{
+			_service.Console.Bus.FourScore = _fourScore;
+		}
+	}
+
 	public void ClearDisplay() => _display?.Clear();
 
 	/// <summary>清屏调用次数（测试用）。</summary>
@@ -773,6 +796,10 @@ public partial class EmulatorCore : Node
 						_pressFilePath = args[++i];
 					}
 
+					break;
+
+				case "--four-score":
+					_fourScore = true;
 					break;
 
 				case "--ram-trace":
